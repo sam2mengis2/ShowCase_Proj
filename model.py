@@ -1,4 +1,4 @@
-# Core
+#Core
 import os
 
 # import cv2
@@ -41,8 +41,8 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 # ── Dataset paths ──────────────────────────────────────────────────────────────
-train_dir = "/Users/gurbirs/personal/projects/ShowCase_Proj/Training"
-test_dir = "/Users/gurbirs/personal/projects/ShowCase_Proj/Testing"
+train_dir = "/home/ygg/projects/showcase/Training"
+test_dir = "/home/ygg/projects/showcase/Testing"
 
 
 def build_dataframe(data_dir):
@@ -88,7 +88,7 @@ train_generator = train_datagen.flow_from_dataframe(
     x_col="filepath",
     y_col="label",
     target_size=(224, 224),
-    batch_size=32,
+    batch_size=16,
     class_mode="categorical",
 )
 
@@ -97,7 +97,7 @@ test_generator = test_datagen.flow_from_dataframe(
     x_col="filepath",
     y_col="label",
     target_size=(224, 224),
-    batch_size=32,
+    batch_size=16,
     class_mode="categorical",
     shuffle=False,
 )
@@ -114,8 +114,8 @@ def generate_model():
             tf.keras.layers.MaxPool2D(pool_size=(2, 2), strides=(1, 1)),
             tf.keras.layers.Conv2D(64, kernel_size=3, activation="relu"),
             tf.keras.layers.MaxPool2D(pool_size=(2, 2), strides=(2, 2)),
-            tf.keras.layers.GlobalAveragePooling2D(),
-            tf.keras.layers.Dense(256, activation="relu"),
+            tf.keras.layers.Flatten(),
+            tf.keras.layers.Dense(1024, activation="relu"),
             tf.keras.layers.Dense(4, activation="softmax"),
         ]
     )
