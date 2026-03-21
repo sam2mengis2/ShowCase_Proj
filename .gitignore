@@ -4,5 +4,4 @@ Training/
 Testing/
 tsionvision.db
 uploads/
-
-
+.env
