@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TsionVision — Brain Tumour Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+
+  <nav>
+    <div class="nav-left">
+      <div class="nav-logo">
+        <svg viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.2"/>
+          <circle cx="10" cy="10" r="3" fill="currentColor"/>
+          <line x1="10" y1="1" x2="10" y2="4" stroke="currentColor" stroke-width="1.2"/>
+          <line x1="10" y1="16" x2="10" y2="19" stroke="currentColor" stroke-width="1.2"/>
+          <line x1="1" y1="10" x2="4" y2="10" stroke="currentColor" stroke-width="1.2"/>
+          <line x1="16" y1="10" x2="19" y2="10" stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+        <span>TsionVision</span>
+      </div>
+      <div class="nav-divider"></div>
+      <span class="nav-sub">Neuro · Imaging · AI</span>
+    </div>
+    <div class="nav-right">
+      <div class="status-dot"></div>
+      <span class="status-label">System Online</span>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-tag">
+      <span class="tag-line"></span>
+      3D U-Net segmentation · FLAIR · T1 · T1GD · T2
+    </div>
+    <h1>Brain Tumour<br/><em>Localisation</em></h1>
+    <p class="hero-desc">
+      Upload MRI data and the model generates a 3D probability map showing where
+      tumour tissue may be present — rendered as a clinical overlay and animated sweep.
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-val">4ch</span>
+        <span class="stat-label">MRI input</span>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat">
+        <span class="stat-val">128³</span>
+        <span class="stat-label">Resolution</span>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat">
+        <span class="stat-val">U-Net</span>
+        <span class="stat-label">Architecture</span>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat">
+        <span class="stat-val">Dice</span>
+        <span class="stat-label">Metric</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Upload -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="card-num">01</span>
+          <div>
+            <h2>Upload MRI Data</h2>
+            <p>.dcm · .nii.gz · .zip (4-channel NIfTI set)</p>
+          </div>
+        </div>
+        <div class="card-badge">Required</div>
+      </div>
+
+      <div class="upload-hint-box">
+        <div class="hint-row">
+          <span class="hint-tag best">Best</span>
+          <span class="hint-text">ZIP containing FLAIR, T1, T1GD, T2 .nii.gz files — full 4-channel inference</span>
+        </div>
+        <div class="hint-row">
+          <span class="hint-tag ok">OK</span>
+          <span class="hint-text">Single .nii.gz or .dcm — 1 channel duplicated to 4, reduced accuracy</span>
+        </div>
+      </div>
+
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" accept=".dcm,.dicom,.nii,.nii.gz,.zip" />
+        <div class="drop-inner" id="drop-inner">
+          <div class="drop-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <p class="drop-title">Drop file here or <span class="drop-link">browse</span></p>
+          <p class="drop-hint">.dcm · .nii.gz · .zip</p>
+        </div>
+        <div class="drop-selected" id="drop-selected">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="file-icon">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          <div>
+            <p class="file-name" id="file-name-display">—</p>
+            <p class="file-size" id="file-size-display">—</p>
+          </div>
+          <button class="file-clear" id="file-clear" title="Remove file">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Consent + submit -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="card-num">02</span>
+          <div>
+            <h2>Confirm & Submit</h2>
+            <p>Agree to terms and run analysis</p>
+          </div>
+        </div>
+      </div>
+
+      <label class="consent-label">
+        <input type="checkbox" id="consent-check" />
+        <span class="consent-box-custom"></span>
+        <span class="consent-text">
+          I confirm this scan is submitted for <strong>research purposes only</strong>,
+          appropriate patient consent has been obtained, and all data is handled in
+          accordance with applicable privacy regulations.
+        </span>
+      </label>
+
+      <div class="submit-row">
+        <p class="submit-note">Analysis takes a few seconds · Research use only</p>
+        <button class="btn-run" id="btn-run" disabled>
+          <span class="btn-text">Run Analysis</span>
+          <div class="btn-spinner"></div>
+          <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Result -->
+    <section class="card result-card hidden" id="result-section">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="card-num success-num">✓</span>
+          <div>
+            <h2>Analysis Complete</h2>
+            <p id="result-subtitle">—</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+          <div class="channel-badge" id="channel-badge">—</div>
+          <div class="result-badge" id="result-badge">—</div>
+        </div>
+      </div>
+
+      <!-- Warning (single channel) -->
+      <div class="warning-box hidden" id="warning-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;flex-shrink:0">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <span id="warning-text"></span>
+      </div>
+
+      <!-- Clinical notes (post-submission) -->
+      <div class="notes-section" id="notes-section">
+        <div class="notes-head">
+          <span class="notes-label">Clinical Notes</span>
+          <button class="notes-edit-btn" id="notes-edit-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:12px;height:12px">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Add note
+          </button>
+        </div>
+        <div class="notes-display" id="notes-display">
+          <span class="notes-empty">No clinical notes added.</span>
+        </div>
+        <div class="notes-editor hidden" id="notes-editor">
+          <textarea id="notes-textarea" placeholder="Add clinical observations, diagnosis notes, or follow-up actions…"></textarea>
+          <div class="notes-actions">
+            <button class="notes-cancel" id="notes-cancel">Cancel</button>
+            <button class="notes-save" id="notes-save">Save Note</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Static 3-panel -->
+      <div class="heatmap-wrap">
+        <img id="static-img" src="" alt="Clinical heatmap" style="display:none" />
+        <p class="heatmap-caption" id="static-caption"></p>
+      </div>
+
+      <!-- Animated GIF -->
+      <div class="heatmap-wrap" style="margin-top:1rem">
+        <img id="gif-img" src="" alt="Animated sweep" style="display:none" />
+        <p class="heatmap-caption" id="gif-caption"></p>
+      </div>
+
+      <!-- DICOM metadata -->
+      <details class="meta-block" id="meta-block">
+        <summary>DICOM Header Data</summary>
+        <div class="meta-grid" id="meta-grid"></div>
+      </details>
+
+      <p class="scan-id" id="scan-id-display">—</p>
+    </section>
+
+    <!-- Error -->
+    <section class="card error-card hidden" id="error-section">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="card-num error-num">!</span>
+          <div>
+            <h2>Error</h2>
+            <p id="error-message">Something went wrong.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <span>TsionVision</span>
+    <span class="footer-dot">·</span>
+    <span>Research Prototype</span>
+    <span class="footer-dot">·</span>
+    <span>Not for Clinical Use</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
